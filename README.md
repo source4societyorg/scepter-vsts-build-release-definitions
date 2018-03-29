@@ -21,5 +21,41 @@ Set the following variables up in the variables tab:
     scepter.pat           # your VSTS base64 encoded PAT token. [See this article for help](https://blog.devmatter.com/personal-access-tokens-and-vsts-apis/)
     scepter.repositoryurl # The URL of the repository you wish to send the authentication header to, ex. scepter.visualstudio.com
     scepter.uifolder      # the folder name of the user interface you wish to target in your projects ui folder, ex. webui
-    
-  
+    scepter.bucketprefix  # The prefix of your S3 bucket. The script expects the bucket to be in format $(scepter.bucketprefix)-$(scepter.environment) in S3.
+
+Be sure to add your build triggers to the appropriate branch. SCEPTER projects should target the core repository of their project and only when changes to the ui folder they are targeting are made.
+
+# ui-android-build
+
+Requires the [Yarn task by Geek Learning](https://marketplace.visualstudio.com/items?itemName=geeklearningio.gl-vsts-tasks-yarn), [vsts-react-native-tasks](https://github.com/Microsoft/vsts-react-native-tasks), [Build:Gradle](https://go.microsoft.com/fwlink/?LinkID=613720), Decrypt File (Open SSL), [Build: Android Signing](https://docs.microsoft.com/en-us/vsts/build-release/tasks/build/android-signing?view=vsts), [Utility: Copy Files](https://go.microsoft.com/fwlink/?LinkID=708389), [Utility: Publish Build Artifacts](https://docs.microsoft.com/en-us/vsts/build-release/tasks/utility/publish-build-artifacts?view=vsts), [AppCenter: Distribute](https://intercom.help/appcenter/).
+
+This will trigger a react-native android build using the gradle configuration within your project, with a deploy to AppCenter. By default it looks for new commits to the `integration` branch, specifically to the mobile app ui folder. You may need to adjust this to match your unique scepter setup. Set the variables as follows:
+
+    scepter.keyencryptpass # Password for you encrypted key file
+    scepter.keypass        # Password for your signing key
+    scepter.keystorefile   # The name of your keystore file. You should have a file of the same name with .enc appended to it stored in your android/app/keystores folder.
+    scepter.keystorepass   # Yet another password, this one for your keystore itself.
+    scepter.pat            # Your base64 encoded username:pat token for repository access via https
+    scepter.repositoryurl  # scepter.repositoryurl # The URL of the repository you wish to send the authentication header to, ex. scepter.visualstudio.com
+    scepter.uifolder      # the folder name of the user interface you wish to target in your projects ui folder, ex. mobileui
+
+You can encrypt your signing key and store it in the repository safely (assuming P != NP) or modify this to store it in VSTS [Secure Files](https://docs.microsoft.com/en-us/vsts/build-release/concepts/library/secure-files?view=vsts) depending on whether you want a vendor dependent solution.
+
+This is an export of an integration branch build, so zipalign is not set. You can make the necessary adjustments fairly easily though by understanding the [Build: Android Signing](https://docs.microsoft.com/en-us/vsts/build-release/tasks/build/android-signing?view=vsts), [Utility: Copy Files](https://go.microsoft.com/fwlink/?LinkID=708389) task.
+
+# ui-ios-build
+
+Requires the [Yarn task by Geek Learning](https://marketplace.visualstudio.com/items?itemName=geeklearningio.gl-vsts-tasks-yarn), [vsts-react-native-tasks](https://github.com/Microsoft/vsts-react-native-tasks), [Utility: Install Apple Certificate](https://docs.microsoft.com/en-us/vsts/build-release/tasks/utility/install-apple-certificate?view=vsts), [Utility: Install Apple Provisioning Profile](https://docs.microsoft.com/en-us/vsts/build-release/tasks/utility/install-apple-provisioning-profile?view=vsts), [Build: Xcode Build](https://docs.microsoft.com/en-us/vsts/build-release/tasks/build/xcode-build?view=tfs-2018), [Utility: Copy Files](https://go.microsoft.com/fwlink/?LinkID=708389), [Utility: Publish Build Artifacts](https://docs.microsoft.com/en-us/vsts/build-release/tasks/utility/publish-build-artifacts?view=vsts), [AppCenter: Distribute](https://intercom.help/appcenter/).
+
+This will trigger a react-native ios build using xcode configuration within your project, with a deploy to AppCenter. By default it looks for new commits to the `integration` branch, specifically to the mobile app ui folder. You may need to adjust this to match your unique scepter setup. Set the variables as follows:
+
+    scepter.pat            # Your base64 encoded username:pat token for repository access via https
+    scepter.projectfolder  # name of your xcodeproj file without the .xcodeproj extension
+    scepter.repositoryurl  # scepter.repositoryurl # The URL of the repository you wish to send the authentication header to, ex. scepter.visualstudio.com
+    scepter.scheme         # Name of the iOS build scheme for your application (usually matches projectfolder)
+    scepter.uifolder       # the folder name of the user interface you wish to target in your projects ui folder, ex. mobileui
+    scepter.repositoryurl  # scepter.repositoryurl # The URL of the repository you wish to send the authentication header to, ex. scepter.visualstudio.com
+
+Store your signing and provisioning certificates in [Secure Files](https://docs.microsoft.com/en-us/vsts/build-release/concepts/library/secure-files?view=vsts) and reference them in the appropriate tasks.
+
+
