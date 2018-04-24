@@ -14,6 +14,9 @@ Furthermore you will need to configure the specific environment targets and buck
 
 Requires the [Yarn task by Geek Learning](https://marketplace.visualstudio.com/items?itemName=geeklearningio.gl-vsts-tasks-yarn)
 
+# ui-s3-deployment
+Requires the [Yarn task by Geek Learning](https://marketplace.visualstudio.com/items?itemName=geeklearningio.gl-vsts-tasks-yarn)
+
 Set the following variables up in the variables tab:
 
     scepter.branch        # the branch you would like to target for automatic build triggers, ex. integration
@@ -24,6 +27,18 @@ Set the following variables up in the variables tab:
     scepter.bucketprefix  # The prefix of your S3 bucket. The script expects the bucket to be in format $(scepter.bucketprefix)-$(scepter.environment) in S3.
 
 Be sure to add your build triggers to the appropriate branch. SCEPTER projects should target the core repository of their project and only when changes to the ui folder they are targeting are made.
+
+# service-lambda-deployment
+
+Requires the [Yarn task by Geek Learning](https://marketplace.visualstudio.com/items?itemName=geeklearningio.gl-vsts-tasks-yarn)
+
+Set the following variables up
+
+    scepter.service        # The name of the service as it appears in your folder structure (likely the name you used to create the service)
+    scepter.provider       # The name of the provider. Currently only "aws" is supported
+    scepter.environment    # The name of the environment to target, i.e. "development"
+
+See [scepter-command-service - deploy](https://github.com/source4societyorg/SCEPTER-command-service) for an idea how this works
 
 # ui-android-build
 
